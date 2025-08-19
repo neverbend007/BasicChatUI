@@ -1,0 +1,361 @@
+{
+  "name": "ChatBot",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "assistant",
+        "assistantId": {
+          "__rl": true,
+          "value": "asst_BagKM9PM59BLYWcL5hWHb9Ri",
+          "mode": "list",
+          "cachedResultName": "retellAI-n8n"
+        },
+        "prompt": "define",
+        "text": "=UserMessage:{{ $('Webhook').item.json.body.message }}\nEmail: {{ $('Webhook').item.json.body.userEmail }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -192,
+        -416
+      ],
+      "id": "7d530f74-1bba-44f6-8af1-c6346fa9893a",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "M95g4HlcvjcKVpUb",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7365a5cd-d9f3-4050-9c27-ec382d77b6e6",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -848,
+        -224
+      ],
+      "id": "a97610ce-b429-45ed-a4e7-619d0b244b95",
+      "name": "Webhook",
+      "webhookId": "7365a5cd-d9f3-4050-9c27-ec382d77b6e6"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        288,
+        -416
+      ],
+      "id": "c566b397-69b1-477c-ba64-84151bfc8842",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.body.userEmail }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        -208
+      ],
+      "id": "d9536518-d5d7-40ad-adbd-6a0952ce0764",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca3f9b7a-28a3-4eb5-bb7c-4b00871f632a",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "c937b845-7a05-4c84-9ee9-521f86db149d",
+              "name": "threadId",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        -416
+      ],
+      "id": "b69d5c50-68f0-4456-ab55-efdf87cd9776",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ba3775ea-d38e-46ec-b6fa-0d72dcdac0be",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -416,
+        -224
+      ],
+      "id": "ed87c3e4-bfa6-43a4-aeed-1d75d4803b92",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lKxT-X0BXpbNfja1_oJjQvw0XM-ML8KOV8AX6D6rAPI",
+          "mode": "list",
+          "cachedResultName": "BasicChatAuthList",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lKxT-X0BXpbNfja1_oJjQvw0XM-ML8KOV8AX6D6rAPI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lKxT-X0BXpbNfja1_oJjQvw0XM-ML8KOV8AX6D6rAPI/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json.body.userEmail }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -608,
+        -224
+      ],
+      "id": "5e02b7ea-ad2b-4d5e-98ce-4aa04aa6aba3",
+      "name": "CheckAuthList",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "A6AidUUDQ7EgsXBi",
+          "name": "robdelaney007"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -16,
+        -48
+      ],
+      "id": "416bc478-00df-44a9-9698-f16dc0f78bb7",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8b08a093-ac16-4d23-ae9f-92328694f109",
+              "name": "output",
+              "value": "You are not authorized to use this Agent",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        -48
+      ],
+      "id": "19cfcaf7-02fb-4cdf-ab48-91b66c9e1b64",
+      "name": "SetDenyMessage"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "neverbend007.app.n8n.cloud",
+            "user-agent": "node",
+            "content-length": "57",
+            "accept": "application/json, text/plain;q=0.8, */*;q=0.5",
+            "accept-encoding": "gzip, br",
+            "accept-language": "*",
+            "cache-control": "no-cache",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "2601:c4:4280:60:5977:bb3a:875c:c0b3",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "97163429b72fdfc2-IAD",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "pragma": "no-cache",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "2601:c4:4280:60:5977:bb3a:875c:c0b3, 104.23.211.26",
+            "x-forwarded-host": "neverbend007.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-8-86454fd949-zdbgh",
+            "x-is-trusted": "yes",
+            "x-real-ip": "2601:c4:4280:60:5977:bb3a:875c:c0b3"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "message": "Hello",
+            "userEmail": "robdelaney007@gmail.com"
+          },
+          "webhookUrl": "https://neverbend007.app.n8n.cloud/webhook/7365a5cd-d9f3-4050-9c27-ec382d77b6e6",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "CheckAuthList",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Message a model",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SetDenyMessage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CheckAuthList": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetDenyMessage": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "7cd63791-4015-4e74-8345-7df7dbe97626",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d0365c96a23dd744076cc21111545bd50f82449e9fd1e537d55b90797a2041f5"
+  },
+  "id": "zDvdwQ9pQ7kfY70c",
+  "tags": []
+}
