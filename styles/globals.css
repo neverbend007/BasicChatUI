@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--radius: 0.75rem;
+	}
+	* {
+		@apply border-border;
+	}
+	html, body {
+		@apply bg-background text-foreground;
+	}
+}
+
+@layer components {
+	.container-responsive {
+		@apply mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8;
+	}
+}
+
+
